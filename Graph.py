@@ -45,6 +45,18 @@ class Graph:
     def generateMatrix(self,keyArray,originalArray):
         matrix=np.zeros((originalArray.shape[0],len(keyArray)),dtype=np.int)
         matrix[:,matrix.shape[1]-1]=originalArray[:,originalArray.shape[1]-1]
+        for bunch in range(originalArray.shape[0]):
+            order=1
+            for node in originalArray[bunch]:
+                try:
+                    index=keyArray.index(node)
+                except Exception as e:
+                    index=None
+                finally:
+                    if index!=None:
+                        matrix[bunch,index]=order
+                        order+=1
+
         return matrix
     def onMapping(self):
         lines=self.readFile()
@@ -54,22 +66,7 @@ class Graph:
         start,end,main_array=self.onSplitStartAndEnd(array)
         key_array=self.generateKeys(start,end,main_array)
         matrix=self.generateMatrix(key_array,main_array)
-        for bunch in range(main_array.shape[0]):
-            order=1
-            for node in main_array[bunch]:
-                try:
-                    index=key_array.index(node)
-                except Exception as e:
-                    index=None
-                finally:
-                    if index!=None:
-                        matrix[bunch,index]=order
-                        order+=1
-
-
         if matrix.any():
-            print(key_array)
-            print(main_array)
             return matrix
         else:
             return False
