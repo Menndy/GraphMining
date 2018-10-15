@@ -43,10 +43,13 @@ class Graph:
         key_array.append('weight')
         return key_array
     def generateMatrix(self,keyArray,originalArray):
-        matrix=np.zeros((originalArray.shape[0],len(keyArray)),dtype=np.int)
+        matrix=np.zeros((originalArray.shape[0],len(keyArray)),dtype=np.int64)
         matrix[:,matrix.shape[1]-1]=originalArray[:,originalArray.shape[1]-1]
+        adjacencyMatrix=np.zeros((matrix.shape[1]-1,matrix.shape[1]-1),dtype=np.int64)
+
         for bunch in range(originalArray.shape[0]):
             order=1
+            sequence=[]
             for node in originalArray[bunch]:
                 try:
                     index=keyArray.index(node)
@@ -54,10 +57,16 @@ class Graph:
                     index=None
                 finally:
                     if index!=None:
+                        sequence.append(index)
                         matrix[bunch,index]=order
                         order+=1
+            sequence.sort()
+            for i in range(len(sequence)-1):
+                adjacencyMatrix[sequence[i],sequence[i+1]]=1
+        return matrix,adjacencyMatrix
 
-        return matrix
+
+
     def onMapping(self):
         lines=self.readFile()
         array,count=self.onSplitAndCount(lines)
@@ -65,13 +74,14 @@ class Graph:
         array=self.onDuplicateRemoval(array)
         start,end,main_array=self.onSplitStartAndEnd(array)
         key_array=self.generateKeys(start,end,main_array)
-        matrix=self.generateMatrix(key_array,main_array)
-        if matrix.any():
-            return matrix
+        matrix,adjacencyMatrix=self.generateMatrix(key_array,main_array)
+        if matrix.any() or adjacencyMatrix.any():
+            return matrix,adjacencyMatrix
         else:
             return False
 
 if __name__=='__main__':
     graph=Graph('./PSNPath-A_V4-A_Q27.frame')
-    matrix=graph.onMapping()
+    matrix,adjacencyMatrix=graph.onMapping()
     print(matrix)
+    print(adjacencyMatrix)
