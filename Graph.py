@@ -63,6 +63,7 @@ class Graph:
             sequence.sort()
             for i in range(len(sequence)-1):
                 adjacencyMatrix[sequence[i],sequence[i+1]]=1
+            del sequence
         return matrix,adjacencyMatrix
 
 
