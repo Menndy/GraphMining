@@ -66,6 +66,16 @@ class Graph:
             del sequence
         return matrix,adjacencyMatrix
 
+    def calcLeastMatrix(self,adjacencyMatrix):
+        originalMatrix=adjacencyMatrix
+        path=-1*np.ones((originalMatrix.shape[0],originalMatrix.shape[1]),dtype=np.int64)
+        for k in range(0,originalMatrix.shape[0]):
+            for i in range(0,originalMatrix.shape[0]):
+                for j in range(0,originalMatrix.shape[1]):
+                    if originalMatrix[i,j]>(originalMatrix[i,k]+originalMatrix[k,j]):
+                        originalMatrix[i,j]=originalMatrix[i,k]+originalMatrix[k,j]
+                        path[i,j]=k
+        return originalMatrix,path
 
 
     def onMapping(self):
@@ -76,8 +86,10 @@ class Graph:
         start,end,main_array=self.onSplitStartAndEnd(array)
         key_array=self.generateKeys(start,end,main_array)
         matrix,adjacencyMatrix=self.generateMatrix(key_array,main_array)
-        if matrix.any() or adjacencyMatrix.any():
-            return matrix,adjacencyMatrix
+        print(main_array)
+        least,least_path=self.calcLeastMatrix(adjacencyMatrix)
+        if least.any() or least_path.any():
+            return least,least_path
         else:
             return False
 
