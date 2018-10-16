@@ -43,9 +43,11 @@ class Graph:
         key_array.append('weight')
         return key_array
     def generateMatrix(self,keyArray,originalArray):
+        print(keyArray,originalArray)
         matrix=np.zeros((originalArray.shape[0],len(keyArray)),dtype=np.int64)
         matrix[:,matrix.shape[1]-1]=originalArray[:,originalArray.shape[1]-1]
         adjacencyMatrix=np.zeros((matrix.shape[1]-1,matrix.shape[1]-1),dtype=np.int64)
+        temp=np.inf+np.zeros((matrix.shape[1]-1,matrix.shape[1]-1),dtype=np.int64)
 
         for bunch in range(originalArray.shape[0]):
             order=1
@@ -60,10 +62,15 @@ class Graph:
                         sequence.append(index)
                         matrix[bunch,index]=order
                         order+=1
-            sequence.sort()
-            for i in range(len(sequence)-1):
-                adjacencyMatrix[sequence[i],sequence[i+1]]=1
+            # sequence.sort()
+            sequence_length=len(sequence)-1
+            for i in range(0,sequence_length):
+                adjacencyMatrix[sequence[i],sequence[i+1]]+=matrix[bunch,-1]
+                temp[sequence[i],sequence[i+1]]=0
             del sequence
+
+        adjacencyMatrix=adjacencyMatrix+temp
+        print(adjacencyMatrix)
         return matrix,adjacencyMatrix
 
     def calcLeastMatrix(self,adjacencyMatrix):
@@ -86,7 +93,6 @@ class Graph:
         start,end,main_array=self.onSplitStartAndEnd(array)
         key_array=self.generateKeys(start,end,main_array)
         matrix,adjacencyMatrix=self.generateMatrix(key_array,main_array)
-        print(main_array)
         least,least_path=self.calcLeastMatrix(adjacencyMatrix)
         if least.any() or least_path.any():
             return least,least_path
